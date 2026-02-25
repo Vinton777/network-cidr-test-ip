@@ -10,19 +10,14 @@
 
 *(Скрипт попытается автоматически установить недостающие системные зависимости при запуске из-под root)*
 
-## Установка одним скриптом
+## Установка 
 
-### Для Linux (Ubuntu, Debian, CentOS и др.)
-Вы можете установить или обновить скрипт глобально в систему, выполнив следующую команду:
-```bash
-curl -sSL https://raw.githubusercontent.com/Vinton777/netblock-analyzer/master/install.sh | sudo bash
-```
-
-### Для Termux (Android)
-В Termux (смартфоны, планшеты) выполните команду установки **без sudo**:
+Выполните следующую команду в терминале (подходит как для Linux, так и для Termux на Android):
 ```bash
 curl -sSL https://raw.githubusercontent.com/Vinton777/netblock-analyzer/master/install.sh | bash
 ```
+
+> **Примечание для Linux:** Скрипт устанавливается в `/opt/` и `/usr/local/bin/`. Если вы обычный пользователь (не root), скрипт попросит вас запустить его с правами суперпользователя: `curl ... | sudo bash`
 
 *(Либо вы можете клонировать репозиторий и запускать скрипт `./netblock_analyzer.sh` локально)*
 
