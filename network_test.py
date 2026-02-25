@@ -162,19 +162,35 @@ def main():
     work_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    cidr_file = os.path.join(work_dir, "cidr.txt")
-    if not os.path.exists(cidr_file):
-        fallback_file = os.path.join(script_dir, "cidr.txt")
+    print("--- Режим работы ---")
+    while True:
+        mode_val = input("Выберите режим:\n1 - Проверка CIDR (cidr.txt)\n2 - Проверка IP (ip.txt)\nВаш выбор [1]: ").strip()
+        if not mode_val:
+            mode = 1
+            break
+        if mode_val in ('1', '2'):
+            mode = int(mode_val)
+            break
+        print("Пожалуйста, введите 1 или 2.")
+        
+    filename = "cidr.txt" if mode == 1 else "ip.txt"
+    
+    target_file = os.path.join(work_dir, filename)
+    if not os.path.exists(target_file):
+        fallback_file = os.path.join(script_dir, filename)
         if os.path.exists(fallback_file):
-            cidr_file = fallback_file
+            target_file = fallback_file
         else:
-            print(f"Ошибка: Файл cidr.txt не найден ни в текущей папке ({work_dir}), ни в системной ({script_dir}).")
+            print(f"Ошибка: Файл {filename} не найден ни в текущей папке ({work_dir}), ни в системной ({script_dir}).")
             sys.exit(1)
             
     results_file = os.path.join(work_dir, "results.csv")
         
-    print("--- Настройки проверки сети ---")
-    num_ips = get_int_input("Сколько IP проверять для каждого CIDR?", 5)
+    print("\n--- Настройки проверки сети ---")
+    if mode == 1:
+        num_ips = get_int_input("Сколько IP проверять для каждого CIDR?", 5)
+    else:
+        num_ips = 1
     timeout = get_int_input("Timeout для ping в секундах?", 2)
     max_threads = get_int_input("Сколько потоков использовать?", 20)
     check_asn = get_yes_no_input("Отображать ASN и провайдера? (y/n) (может не работать при блокировках)", "y")
@@ -185,18 +201,18 @@ def main():
     
     tasks = []
     try:
-        with open(cidr_file, "r", encoding="utf-8") as f:
+        with open(target_file, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line or line.startswith('#'):
                     continue
-                cidr_str = line.split()[0]
-                tasks.append(cidr_str)
+                item_str = line.split()[0]
+                tasks.append(item_str)
     except Exception as e:
-        print(f"Ошибка чтения cidr.txt: {e}")
+        print(f"Ошибка чтения {filename}: {e}")
         sys.exit(1)
 
-    print(f"{'CIDR':<18} | {'ASN':<12} | {'Provider':<25} | {'PING'}")
+    print(f"{'CIDR/IP':<18} | {'ASN':<12} | {'Provider':<25} | {'PING'}")
     print("-" * 68)
 
     try:
@@ -243,7 +259,7 @@ def main():
         try:
             with open(results_file, "w", newline='', encoding="utf-8") as cf:
                 writer = csv.writer(cf)
-                writer.writerow(["CIDR", "ASN", "PROVIDER", "PING"])
+                writer.writerow(["CIDR_OR_IP", "ASN", "PROVIDER", "PING"])
                 writer.writerows(results)
             print(f"\n[+] Результаты успешно сохранены в {results_file}")
         except Exception as e:
