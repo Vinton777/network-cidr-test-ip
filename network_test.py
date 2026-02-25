@@ -52,33 +52,53 @@ def get_asn_info(cidr_obj):
     with whois_lock:
         if target in asn_cache:
             return asn_cache[target]
+            
+        asn = "Unknown"
+        provider = "Unknown"
         
-        cmd = ['whois', target]
+        # Первая попытка: обычный whois
         try:
+            cmd = ['whois', target]
             res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=10)
             output = res.stdout
         except Exception:
             output = ""
+            
+        # Вторая попытка (особенно для мобильного инета Termux, если обычный молчит)
+        if not output or "not found" in output.lower() or "no entries found" in output.lower():
+            try:
+                cmd_fallback = ['whois', '-h', 'whois.radb.net', target]
+                res2 = subprocess.run(cmd_fallback, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=10)
+                output += "\n" + res2.stdout
+            except Exception:
+                pass
         
-        asn = "Unknown"
-        provider = "Unknown"
-    
-    # Извлечение данных из whois
-    for line in output.splitlines():
-        line = line.strip()
-        lower_line = line.lower()
-        if lower_line.startswith('origin:') or lower_line.startswith('aut-num:'):
-            parts = line.split(':', 1)
-            if len(parts) > 1 and asn == "Unknown":
-                asn = parts[1].strip()
-        if (lower_line.startswith('as-name:') or lower_line.startswith('org-name:') or 
-            lower_line.startswith('netname:') or lower_line.startswith('descr:')):
-            parts = line.split(':', 1)
-            if len(parts) > 1 and provider == "Unknown":
-                p = parts[1].strip()
-                if p:
-                    provider = p
-    
+        # Извлечение данных из whois (расширенный парсинг)
+        for line in output.splitlines():
+            line = line.strip()
+            lower_line = line.lower()
+            
+            # Поиск ASN
+            if lower_line.startswith('origin:') or lower_line.startswith('aut-num:') or lower_line.startswith('asn:'):
+                parts = line.split(':', 1)
+                if len(parts) > 1 and asn == "Unknown":
+                    # Бывает "AS1234", "1234", очищаем
+                    val = parts[1].strip().upper()
+                    if val.startswith('AS'):
+                        asn = val
+                    elif val.isdigit():
+                        asn = 'AS' + val
+            
+            # Поиск Provider
+            if (lower_line.startswith('as-name:') or lower_line.startswith('org-name:') or 
+                lower_line.startswith('netname:') or lower_line.startswith('descr:') or 
+                lower_line.startswith('organization:') or lower_line.startswith('owner:')):
+                parts = line.split(':', 1)
+                if len(parts) > 1 and provider == "Unknown":
+                    p = parts[1].strip()
+                    if p and p.lower() not in ["none", "na", "-"]:
+                        provider = p
+        
     asn_cache[target] = (asn, provider)
     return asn, provider
 
