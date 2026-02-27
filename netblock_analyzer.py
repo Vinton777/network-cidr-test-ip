@@ -158,7 +158,7 @@ def evaluate_cidr(cidr_str, ips, timeout, check_asn):
         
     return cidr_str, asn, provider, is_reachable, "ok"
 
-VERSION = "1.2.0"
+VERSION = "1.3.0"
 
 def main():
     work_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
@@ -174,11 +174,13 @@ def main():
         '1': ("Свой список CIDR", 'cidr.txt', 1),
         '2': ("Свой список IP", 'ip.txt', 2),
         '3': ("UFO", 'cidr_ufo.txt', 1),
-        '4': ("Selectel", 'cidr_selectel.txt', 1),
-        '5': ("Cloud.ru", 'cidr_cloudru.txt', 1),
-        '6': ("Yandex", 'cidr_yandex.txt', 1),
-        '7': ("VK", 'cidr_vk.txt', 1),
-        '8': ("Reg.ru", 'cidr_regru.txt', 1)
+        '4': ("Selectel 1", 'cidr_selectel_1.txt', 1),
+        '5': ("Selectel 2", 'cidr_selectel_2.txt', 1),
+        '6': ("Selectel Old", 'cidr_selectel.txt', 1),
+        '7': ("Cloud.ru", 'cidr_cloudru.txt', 1),
+        '8': ("Yandex", 'cidr_yandex.txt', 1),
+        '9': ("VK", 'cidr_vk.txt', 1),
+        '10': ("Reg.ru", 'cidr_regru.txt', 1)
     }
     while True:
         print("Выберите списки для проверки:")
@@ -192,7 +194,7 @@ def main():
             filename = selected_option[1]
             mode = selected_option[2]
             break
-        print("Пожалуйста, введите число от 1 до 8.\n")
+        print(f"Пожалуйста, введите число от 1 до {len(options)}.\n")
     
     target_file = os.path.join(work_dir, filename)
     if not os.path.exists(target_file):

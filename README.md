@@ -22,15 +22,18 @@ curl -sSL https://raw.githubusercontent.com/Vinton777/netblock-analyzer/master/i
 *(Либо вы можете клонировать репозиторий и запускать скрипт `./netblock_analyzer.sh` локально)*
 
 ## Варианты проверки
-При запуске вы можете выбрать один из встроенных списков или подсунуть свои файлы `cidr.txt` / `ip.txt`:
-1. **Свой список CIDR** (`cidr.txt`)
-2. **Свой список IP** (`ip.txt`)
-3. **UFO** (`cidr_ufo.txt`)
-4. **Selectel** (`cidr_selectel.txt`) *(осторожно, очень много CIDR!)*
-5. **Cloud.ru** (`cidr_cloudru.txt`)
-6. **Yandex** (`cidr_yandex.txt`)
-7. **VK** (`cidr_vk.txt`)
-8. **Reg.ru** (`cidr_regru.txt`)
+
+25: При запуске вы можете выбрать один из встроенных списков или подсунуть свои файлы `cidr.txt` / `ip.txt`:
+26: 1. **Свой список CIDR** (`cidr.txt`)
+27: 2. **Свой список IP** (`ip.txt`)
+28: 3. **UFO** (`cidr_ufo.txt`)
+29: 4. **Selectel 1** (`cidr_selectel_1.txt`)
+30: 5. **Selectel 2** (`cidr_selectel_2.txt`)
+31: 6. **Selectel Old** (`cidr_selectel.txt`)
+32: 7. **Cloud.ru** (`cidr_cloudru.txt`)
+33: 8. **Yandex** (`cidr_yandex.txt`)
+34: 9. **VK** (`cidr_vk.txt`)
+35: 10. **Reg.ru** (`cidr_regru.txt`)
 
 ## Использование
 
