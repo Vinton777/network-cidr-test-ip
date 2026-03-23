@@ -6,7 +6,7 @@ set -e
 USERNAME="Vinton777"
 REPO_NAME="network-cidr-test-ip"
 BRANCH="master"
-BASE_URL="https://raw.githubusercontent.com/$USERNAME/$REPO_NAME/$BRANCH"
+TAR_URL="https://github.com/$USERNAME/$REPO_NAME/archive/refs/heads/$BRANCH.tar.gz"
 
 if [ -d "/data/data/com.termux" ]; then
     export PREFIX="/data/data/com.termux/files/usr"
@@ -24,39 +24,30 @@ else
     fi
 fi
 
-echo "Установка NetBlock Analyzer..."
+echo "Установка NetBlock Analyzer и зависимостей..."
 
-# Проверка наличия curl
-if ! command -v curl >/dev/null 2>&1; then
-    echo "curl не найден. Попытка установки..."
-    if [ "$IS_TERMUX" = "1" ]; then
-        pkg update -y && pkg install -y curl
-    elif command -v apt >/dev/null 2>&1; then
-        apt update && apt install -y curl
+# Проверка и установка зависимостей
+if [ "$IS_TERMUX" = "1" ]; then
+    echo "Обновление пакетов и установка зависимостей в Termux..."
+    pkg update -y
+    pkg install -y curl tar python inetutils whois
+else
+    echo "Проверка наличия пакетных менеджеров и установка зависимостей..."
+    if command -v apt >/dev/null 2>&1; then
+        apt update && apt install -y curl tar python3 iputils-ping whois
     elif command -v yum >/dev/null 2>&1; then
-        yum install -y curl
+        yum install -y curl tar python3 iputils whois
     else
-        echo "Пожалуйста, установите curl вручную."
-        exit 1
+        echo "Внимание: Не удалось определить пакетный менеджер. Убедитесь, что curl, tar, python3, ping и whois установлены."
     fi
 fi
 
 echo "Создание директории $INSTALL_DIR..."
+rm -rf "$INSTALL_DIR"
 mkdir -p "$INSTALL_DIR"
 
-echo "Загрузка файлов скрипта..."
-curl -fsSL "$BASE_URL/netblock_analyzer.sh" -o "$INSTALL_DIR/netblock_analyzer.sh"
-curl -fsSL "$BASE_URL/netblock_analyzer.py" -o "$INSTALL_DIR/netblock_analyzer.py"
-curl -fsSL "$BASE_URL/cidr.txt" -o "$INSTALL_DIR/cidr.txt"
-curl -fsSL "$BASE_URL/ip.txt" -o "$INSTALL_DIR/ip.txt"
-curl -fsSL "$BASE_URL/cidr_ufo.txt" -o "$INSTALL_DIR/cidr_ufo.txt"
-curl -fsSL "$BASE_URL/cidr_selectel.txt" -o "$INSTALL_DIR/cidr_selectel.txt"
-curl -fsSL "$BASE_URL/cidr_selectel_1.txt" -o "$INSTALL_DIR/cidr_selectel_1.txt"
-curl -fsSL "$BASE_URL/cidr_selectel_2.txt" -o "$INSTALL_DIR/cidr_selectel_2.txt"
-curl -fsSL "$BASE_URL/cidr_cloudru.txt" -o "$INSTALL_DIR/cidr_cloudru.txt"
-curl -fsSL "$BASE_URL/cidr_yandex.txt" -o "$INSTALL_DIR/cidr_yandex.txt"
-curl -fsSL "$BASE_URL/cidr_vk.txt" -o "$INSTALL_DIR/cidr_vk.txt"
-curl -fsSL "$BASE_URL/cidr_regru.txt" -o "$INSTALL_DIR/cidr_regru.txt"
+echo "Загрузка и распаковка файлов скрипта..."
+curl -fsSL "$TAR_URL" | tar -xz -C "$INSTALL_DIR" --strip-components=1
 
 chmod +x "$INSTALL_DIR/netblock_analyzer.sh"
 

@@ -158,7 +158,7 @@ def evaluate_cidr(cidr_str, ips, timeout, check_asn):
         
     return cidr_str, asn, provider, is_reachable, "ok"
 
-VERSION = "1.3.0"
+VERSION = "1.4.0"
 
 def main():
     work_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
@@ -182,6 +182,20 @@ def main():
         '9': ("VK", 'cidr_vk.txt', 1),
         '10': ("Reg.ru", 'cidr_regru.txt', 1)
     }
+    
+    # Динамическая подгрузка из cidr_lists
+    cidr_lists_dir = os.path.join(script_dir, "cidr_lists")
+    if os.path.isdir(cidr_lists_dir):
+        files = sorted(os.listdir(cidr_lists_dir))
+        idx = 11
+        for f in files:
+            if f.endswith('.txt'):
+                name_disp = f.replace(".txt", "").replace("__", " ").strip()
+                # Удаляем префикс из цифр если есть (например, 001, 002)
+                if name_disp[:3].isdigit() and name_disp[3] == ' ':
+                    name_disp = name_disp[4:]
+                options[str(idx)] = (f"Sub-list: {name_disp}", os.path.join("cidr_lists", f), 1)
+                idx += 1
     while True:
         print("Выберите списки для проверки:")
         for k, v in options.items():
