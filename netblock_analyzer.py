@@ -158,7 +158,7 @@ def evaluate_cidr(cidr_str, ips, timeout, check_asn):
         
     return cidr_str, asn, provider, is_reachable, "ok"
 
-VERSION = "1.4.0"
+VERSION = "1.5.0"
 
 def main():
     work_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
@@ -219,7 +219,8 @@ def main():
             print(f"Ошибка: Файл {filename} не найден ни в текущей папке ({work_dir}), ни в системной ({script_dir}).")
             sys.exit(1)
             
-    results_file = os.path.join(work_dir, "results.csv")
+    base_name = os.path.basename(filename).replace(".txt", "")
+    results_file = os.path.join(work_dir, f"results_{base_name}.csv")
         
     print("\n--- Настройки проверки сети ---")
     if mode == 1:
@@ -277,7 +278,7 @@ def main():
                     
                     print(f"{res_cidr:<18} | {asn:<12} | {provider_disp:<25} | {ping_color}")
                     
-                    if save_res:
+                    if save_res and is_reachable:
                         results.append([res_cidr, asn, provider, ping_status])
                         
                 except Exception as exc:
