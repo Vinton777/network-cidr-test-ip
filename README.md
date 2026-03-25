@@ -34,7 +34,8 @@ curl -sSL https://raw.githubusercontent.com/Vinton777/network-cidr-test-ip/maste
 8. **Yandex** (`cidr_yandex.txt`)
 9. **VK** (`cidr_vk.txt`)
 10. **Reg.ru** (`cidr_regru.txt`)
-11+. **Подсписки провайдеров РФ из `cidr_lists`** (подгружаются динамически)
+11. **Timeweb** (`timeweb.txt`)
+12+. **Подсписки провайдеров РФ из `cidr_lists`** (подгружаются динамически)
 
 ## Использование
 

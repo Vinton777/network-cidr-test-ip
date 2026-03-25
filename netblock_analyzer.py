@@ -158,7 +158,7 @@ def evaluate_cidr(cidr_str, ips, timeout, check_asn):
         
     return cidr_str, asn, provider, is_reachable, "ok"
 
-VERSION = "1.5.0"
+VERSION = "1.6.0"
 
 def main():
     work_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
@@ -180,14 +180,15 @@ def main():
         '7': ("Cloud.ru", 'cidr_cloudru.txt', 1),
         '8': ("Yandex", 'cidr_yandex.txt', 1),
         '9': ("VK", 'cidr_vk.txt', 1),
-        '10': ("Reg.ru", 'cidr_regru.txt', 1)
+        '10': ("Reg.ru", 'cidr_regru.txt', 1),
+        '11': ("Timeweb", 'timeweb.txt', 1)
     }
     
     # Динамическая подгрузка из cidr_lists
     cidr_lists_dir = os.path.join(script_dir, "cidr_lists")
     if os.path.isdir(cidr_lists_dir):
         files = sorted(os.listdir(cidr_lists_dir))
-        idx = 11
+        idx = 12
         for f in files:
             if f.endswith('.txt'):
                 name_disp = f.replace(".txt", "").replace("__", " ").strip()
