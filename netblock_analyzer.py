@@ -29,14 +29,17 @@ def safe_input(prompt_text):
         sys.exit(0)
     except UnicodeDecodeError:
         print(f"\n{COLOR_RED}Ошибка кодировки ввода. Убедитесь, что используете правильную раскладку.{COLOR_RESET}")
-        return ""
+        return None
     except KeyboardInterrupt:
         print(f'\n{COLOR_RED}[!] Прервано пользователем (Ctrl+C). Выход...{COLOR_RESET}')
         os._exit(0)
 
 def get_int_input(prompt, default):
     while True:
-        val = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}{prompt}{COLOR_RESET} [{default}]: ").strip()
+        val = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}{prompt}{COLOR_RESET} [{default}]: ")
+        if val is None:
+            continue
+        val = val.strip()
         if not val:
             return default
         try:
@@ -46,7 +49,10 @@ def get_int_input(prompt, default):
 
 def get_yes_no_input(prompt, default):
     while True:
-        val = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}{prompt}{COLOR_RESET} [{default}]: ").strip().lower()
+        val = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}{prompt}{COLOR_RESET} [{default}]: ")
+        if val is None:
+            continue
+        val = val.strip().lower()
         if not val:
             return default.lower() == 'y'
         if val in ('y', 'yes'):
@@ -179,7 +185,7 @@ def evaluate_cidr(cidr_str, ips, timeout, check_asn):
         
     return cidr_str, asn, provider, is_reachable, "ok"
 
-VERSION = "1.8.1"
+VERSION = "1.8.2"
 
 def main():
     work_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
@@ -237,7 +243,10 @@ def main():
         print(f"{COLOR_YELLOW}3. Начать тест{COLOR_RESET}")
         print(f"{COLOR_YELLOW}0. Выход{COLOR_RESET}")
         
-        main_choice = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}Ваш выбор{COLOR_RESET} [3]: ").strip()
+        main_choice = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}Ваш выбор{COLOR_RESET} [3]: ")
+        if main_choice is None:
+            continue
+        main_choice = main_choice.strip()
         if not main_choice:
             main_choice = '3'
             
@@ -249,7 +258,10 @@ def main():
                 for k, v in options.items():
                     print(f"{COLOR_YELLOW}{k}. {v[0]} ({v[1]}){COLOR_RESET}")
                 print(f"{COLOR_YELLOW}0. Назад{COLOR_RESET}\n")
-                mode_val = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}Ваш выбор{COLOR_RESET} [0]: ").strip()
+                mode_val = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}Ваш выбор{COLOR_RESET} [0]: ")
+                if mode_val is None:
+                    continue
+                mode_val = mode_val.strip()
                 if not mode_val or mode_val == '0':
                     break
                 if mode_val in options:
