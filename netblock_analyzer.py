@@ -209,7 +209,7 @@ def edit_file(filename, work_dir):
     except Exception as e:
         print(f"{COLOR_RED}Ошибка: {e}{COLOR_RESET}")
 
-VERSION = "1.8.8"
+VERSION = "1.8.9"
 
 def main():
     work_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
@@ -271,6 +271,7 @@ def main():
     check_asn = False
     save_res = True
     selected_option_key = '1'
+    silent_mode = False
 
     if os.path.exists(config_path):
         import json
@@ -283,6 +284,7 @@ def main():
                 check_asn = cfg.get("check_asn", check_asn)
                 save_res = cfg.get("save_res", save_res)
                 selected_option_key = str(cfg.get("selected_option_key", selected_option_key))
+                silent_mode = cfg.get("silent_mode", silent_mode)
         except Exception:
             pass
 
@@ -371,6 +373,21 @@ def main():
                     print(f"{COLOR_RED}Неверный выбор.{COLOR_RESET}")
                     time.sleep(1)
         elif main_choice == '4':
+            clear_screen()
+            print(logo_text)
+            print(f"\n{COLOR_GREEN}Режим отображения:{COLOR_RESET}")
+            
+            print(f"{COLOR_YELLOW}1. Обычный (показывать каждый пинг){COLOR_RESET}")
+            print(f"{COLOR_YELLOW}2. Тихий (скрыть процесс, показать только итог и таймер){COLOR_RESET}")
+            
+            mode_choice = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}Ваш выбор{COLOR_RESET} [1]: ")
+            if mode_choice is None: continue
+            mode_choice = mode_choice.strip()
+            if not mode_choice:
+                mode_choice = '1'
+                
+            silent_mode = (mode_choice == '2')
+            
             import json
             try:
                 with open(config_path, "w", encoding="utf-8") as f:
@@ -380,7 +397,8 @@ def main():
                         "max_threads": max_threads,
                         "check_asn": check_asn,
                         "save_res": save_res,
-                        "selected_option_key": selected_option_key
+                        "selected_option_key": selected_option_key,
+                        "silent_mode": silent_mode
                     }, f)
             except Exception:
                 pass
