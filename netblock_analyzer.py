@@ -438,7 +438,14 @@ def main():
         print(f"Ошибка чтения {filename}: {e}")
         sys.exit(1)
 
-    print(f"\n{COLOR_GREEN}{'CIDR/IP':<18} | {'ASN':<12} | {'Provider':<25} | {'PING'}{COLOR_RESET}")
+    if not silent_mode:
+        print(f"\n{COLOR_GREEN}{'CIDR/IP':<18} | {'ASN':<12} | {'Provider':<25} | {'PING'}{COLOR_RESET}")
+    else:
+        print(f"\n{COLOR_GREEN}[+] Тихий режим включен. Тестирование ({len(tasks)} записей)...{COLOR_RESET}")
+
+    start_time = time.time()
+    total_tasks = len(tasks)
+    completed = 0
 
     try:
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
@@ -450,11 +457,19 @@ def main():
                 
             for future in concurrent.futures.as_completed(future_to_cidr):
                 cidr_str = future_to_cidr[future]
+                completed += 1
+                if silent_mode:
+                    elapsed = time.time() - start_time
+                    mins, secs = divmod(int(elapsed), 60)
+                    sys.stdout.write(f"\r{COLOR_YELLOW}Прогресс: {completed}/{total_tasks} [{mins:02d}:{secs:02d}]{COLOR_RESET} ")
+                    sys.stdout.flush()
+                    
                 try:
                     res_cidr, asn, provider, is_reachable, status = future.result()
                     
                     if status == "error":
-                        print(f"{res_cidr:<18} | {'Invalid':<12} | {'--':<25} | \033[91merror\033[0m")
+                        if not silent_mode:
+                            print(f"{res_cidr:<18} | {'Invalid':<12} | {'--':<25} | \033[91merror\033[0m")
                         continue
                         
                     if len(provider) > 22:
@@ -465,13 +480,17 @@ def main():
                     ping_status = "yes" if is_reachable else "no"
                     ping_color = "\033[92myes\033[0m" if is_reachable else "\033[91mno\033[0m"
                     
-                    print(f"{res_cidr:<18} | {asn:<12} | {provider_disp:<25} | {ping_color}")
+                    if not silent_mode:
+                        print(f"{res_cidr:<18} | {asn:<12} | {provider_disp:<25} | {ping_color}")
                     
                     if is_reachable:
                         results.append([res_cidr, asn, provider, ping_status])
                         
                 except Exception as exc:
-                    print(f"{cidr_str:<18} | {'Error':<12} | {'--':<25} | \033[91merror\033[0m")
+                    if not silent_mode:
+                        print(f"{cidr_str:<18} | {'Error':<12} | {'--':<25} | \033[91merror\033[0m")
+        if silent_mode:
+            print("\n")
                     
     except KeyboardInterrupt:
         print(f'\n{COLOR_RED}[!] Прервано пользователем (Ctrl+C). Выход...{COLOR_RESET}')
