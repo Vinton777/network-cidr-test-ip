@@ -209,7 +209,7 @@ def edit_file(filename, work_dir):
     except Exception as e:
         print(f"{COLOR_RED}Ошибка: {e}{COLOR_RESET}")
 
-VERSION = "1.9.3"
+VERSION = "1.9.4"
 
 def main():
     work_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
@@ -242,14 +242,15 @@ def main():
         '9': ("VK", 'cidr_vk.txt', 1),
         '10': ("Reg.ru", 'cidr_regru.txt', 1),
         '11': ("Timeweb", 'timeweb.txt', 1),
-        '12': ("CIDR Whitelist", 'cidrwhitelist.txt', 1)
+        '12': ("CIDR Whitelist", 'cidrwhitelist.txt', 1),
+        '13': ("Selectel New", 'cidr_selectel_new.txt', 1)
     }
     
     # Динамическая подгрузка из cidr_lists
     cidr_lists_dir = os.path.join(script_dir, "cidr_lists")
     if os.path.isdir(cidr_lists_dir):
         files = sorted(os.listdir(cidr_lists_dir))
-        idx = 13
+        idx = 14
         for f in files:
             if f.endswith('.txt'):
                 name_disp = f.replace(".txt", "").replace("__", " ").strip()
