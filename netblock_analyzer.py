@@ -185,14 +185,28 @@ def evaluate_cidr(cidr_str, ips, timeout, check_asn):
         
     return cidr_str, asn, provider, is_reachable, "ok"
 
-VERSION = "1.8.5"
+VERSION = "1.8.6"
 
 def main():
     work_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    print(f"\n{COLOR_GREEN}NetBlock Analyzer v{VERSION}{COLOR_RESET}")
-    print(f"{COLOR_GRAY}by Vinton{COLOR_RESET}\n")
+    logo_text = f"""
+{COLOR_GREEN}███╗   ██╗███████╗████████╗██████╗ ██╗     ██████╗  ██████╗██╗  ██╗{COLOR_RESET}
+{COLOR_GREEN}████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██║    ██╔═══██╗██╔════╝██║ ██╔╝{COLOR_RESET}
+{COLOR_GREEN}██╔██╗ ██║█████╗     ██║   ██████╔╝██║    ██║   ██║██║     █████╔╝ {COLOR_RESET}
+{COLOR_GREEN}██║╚██╗██║██╔══╝     ██║   ██╔══██╗██║    ██║   ██║██║     ██╔═██╗ {COLOR_RESET}
+{COLOR_GREEN}██║ ╚████║███████╗   ██║   ██████╔╝███████╗╚██████╔╝╚██████╗██║  ██╗{COLOR_RESET}
+{COLOR_GREEN}╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═════╝ ╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝{COLOR_RESET}
+{COLOR_YELLOW}      █████╗ ███╗   ██╗█████╗ ██╗  ██╗   ██╗███████╗███████╗██████╗ {COLOR_RESET}
+{COLOR_YELLOW}     ██╔══██╗████╗  ██║██╔══██╗██║  ╚██╗ ██╔╝╚══███╔╝██╔════╝██╔══██╗{COLOR_RESET}
+{COLOR_YELLOW}     ███████║██╔██╗ ██║███████║██║   ╚████╔╝   ███╔╝ █████╗  ██████╔╝{COLOR_YELLOW}
+{COLOR_YELLOW}     ██╔══██║██║╚██╗██║██╔══██║██║    ╚██╔╝   ███╔╝  ██╔══╝  ██╔══██╗{COLOR_RESET}
+{COLOR_YELLOW}     ██║  ██║██║ ╚████║██║  ██║███████╗██║   ███████╗███████╗██║  ██║{COLOR_RESET}
+{COLOR_YELLOW}     ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚═╝   ╚══════╝╚══════╝╚═╝  ╚═╝{COLOR_RESET}
+                                                 {COLOR_WHITE}v{VERSION}{COLOR_GRAY} by Vinton{COLOR_RESET}
+"""
+    print(logo_text)
     options = {
         '1': ("Свой список CIDR", 'cidr.txt', 1),
         '2': ("Свой список IP", 'ip.txt', 2),
