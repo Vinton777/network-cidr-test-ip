@@ -182,10 +182,30 @@ def evaluate_cidr(cidr_str, ips, timeout, check_asn):
         asn, provider = get_asn_info(ipaddress.IPv4Network(cidr_str, strict=False))
     else:
         asn, provider = "--", "--"
-        
     return cidr_str, asn, provider, is_reachable, "ok"
 
-VERSION = "1.8.6"
+def edit_file(filename, work_dir):
+    filepath = os.path.join(work_dir, filename)
+    if not os.path.exists(filepath):
+        try:
+            open(filepath, 'a').close()
+        except Exception:
+            pass
+    editor = os.environ.get('EDITOR', 'nano')
+    try:
+        subprocess.run([editor, filepath])
+    except FileNotFoundError:
+        if editor == 'nano':
+            try:
+                subprocess.run(['vi', filepath])
+            except Exception as e:
+                print(f"{COLOR_RED}Ошибка: редактор не найден ('nano' или 'vi') {e}{COLOR_RESET}")
+        else:
+            print(f"{COLOR_RED}Ошибка запуска редактора {editor}.{COLOR_RESET}")
+    except Exception as e:
+        print(f"{COLOR_RED}Ошибка: {e}{COLOR_RESET}")
+
+VERSION = "1.8.7"
 
 def main():
     work_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
@@ -274,15 +294,16 @@ def main():
         print(f"\n{COLOR_GREEN}Главное меню:{COLOR_RESET}")
         print(f"{COLOR_YELLOW}1. Выбрать список для проверки (сейчас выбран: {selected_option[0]}){COLOR_RESET}")
         print(f"{COLOR_YELLOW}2. Настройки проверки сети{COLOR_RESET}")
-        print(f"{COLOR_YELLOW}3. Начать тест{COLOR_RESET}")
+        print(f"{COLOR_YELLOW}3. Редактировать свои списки (cidr.txt / ip.txt){COLOR_RESET}")
+        print(f"{COLOR_YELLOW}4. Начать тест{COLOR_RESET}")
         print(f"{COLOR_YELLOW}0. Выход{COLOR_RESET}")
         
-        main_choice = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}Ваш выбор{COLOR_RESET} [3]: ")
+        main_choice = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}Ваш выбор{COLOR_RESET} [4]: ")
         if main_choice is None:
             continue
         main_choice = main_choice.strip()
         if not main_choice:
-            main_choice = '3'
+            main_choice = '4'
             
         if main_choice == '0':
             sys.exit(0)
@@ -323,6 +344,25 @@ def main():
                 save_res_def = "y" if save_res else "n"
                 save_res = get_yes_no_input(f"Сохранять результаты? (y/n)", save_res_def)
         elif main_choice == '3':
+            while True:
+                print(f"\n{COLOR_GREEN}Редактирование списков:{COLOR_RESET}")
+                print(f"{COLOR_YELLOW}1. cidr.txt (Свой список CIDR){COLOR_RESET}")
+                print(f"{COLOR_YELLOW}2. ip.txt (Свой список IP){COLOR_RESET}")
+                print(f"{COLOR_YELLOW}0. Назад{COLOR_RESET}")
+                
+                edit_choice = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}Ваш выбор{COLOR_RESET} [0]: ")
+                if edit_choice is None: continue
+                edit_choice = edit_choice.strip()
+                
+                if edit_choice == '1':
+                    edit_file('cidr.txt', work_dir)
+                elif edit_choice == '2':
+                    edit_file('ip.txt', work_dir)
+                elif edit_choice == '0' or not edit_choice:
+                    break
+                else:
+                    print(f"{COLOR_RED}Неверный выбор.{COLOR_RESET}")
+        elif main_choice == '4':
             import json
             try:
                 with open(config_path, "w", encoding="utf-8") as f:
