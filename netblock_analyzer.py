@@ -209,7 +209,7 @@ def edit_file(filename, work_dir):
     except Exception as e:
         print(f"{COLOR_RED}Ошибка: {e}{COLOR_RESET}")
 
-VERSION = "1.9.2"
+VERSION = "1.9.3"
 
 def main():
     work_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
@@ -445,7 +445,24 @@ def main():
 
     start_time = time.time()
     total_tasks = len(tasks)
+    
+    completed_lock = threading.Lock()
     completed = 0
+    test_running = True
+
+    def progress_timer():
+        while test_running:
+            elapsed = time.time() - start_time
+            mins, secs = divmod(int(elapsed), 60)
+            with completed_lock:
+                current_completed = completed
+            sys.stdout.write(f"\r{COLOR_YELLOW}Прогресс: {current_completed}/{total_tasks} [{mins:02d}:{secs:02d}]{COLOR_RESET} ")
+            sys.stdout.flush()
+            time.sleep(0.2)
+
+    if silent_mode:
+        t_thread = threading.Thread(target=progress_timer, daemon=True)
+        t_thread.start()
 
     try:
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
@@ -457,12 +474,9 @@ def main():
                 
             for future in concurrent.futures.as_completed(future_to_cidr):
                 cidr_str = future_to_cidr[future]
-                completed += 1
-                if silent_mode:
-                    elapsed = time.time() - start_time
-                    mins, secs = divmod(int(elapsed), 60)
-                    sys.stdout.write(f"\r{COLOR_YELLOW}Прогресс: {completed}/{total_tasks} [{mins:02d}:{secs:02d}]{COLOR_RESET} ")
-                    sys.stdout.flush()
+                
+                with completed_lock:
+                    completed += 1
                     
                 try:
                     res_cidr, asn, provider, is_reachable, status = future.result()
@@ -489,7 +503,13 @@ def main():
                 except Exception as exc:
                     if not silent_mode:
                         print(f"{cidr_str:<18} | {'Error':<12} | {'--':<25} | \033[91merror\033[0m")
+                        
+        test_running = False
         if silent_mode:
+            t_thread.join(timeout=1.0)
+            elapsed = time.time() - start_time
+            mins, secs = divmod(int(elapsed), 60)
+            sys.stdout.write(f"\r{COLOR_YELLOW}Прогресс: {completed}/{total_tasks} [{mins:02d}:{secs:02d}]{COLOR_RESET} ")
             print("\n")
                     
     except KeyboardInterrupt:
