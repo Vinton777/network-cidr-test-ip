@@ -302,17 +302,15 @@ def main():
         print(f"{COLOR_YELLOW}1. Выбрать список для проверки (сейчас выбран: {selected_option[0]}){COLOR_RESET}")
         print(f"{COLOR_YELLOW}2. Настройки проверки сети{COLOR_RESET}")
         print(f"{COLOR_YELLOW}3. Редактировать свои списки (cidr.txt / ip.txt){COLOR_RESET}")
-        mode_str = "Тихий" if silent_mode else "Обычный"
-        print(f"{COLOR_YELLOW}4. Режим отображения (сейчас: {mode_str}){COLOR_RESET}")
-        print(f"{COLOR_YELLOW}5. Начать тест{COLOR_RESET}")
+        print(f"{COLOR_YELLOW}4. Начать тест{COLOR_RESET}")
         print(f"{COLOR_YELLOW}0. Выход{COLOR_RESET}")
         
-        main_choice = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}Ваш выбор{COLOR_RESET} [5]: ")
+        main_choice = safe_input(f" {COLOR_GREEN}[?]{COLOR_RESET} {COLOR_YELLOW}Ваш выбор{COLOR_RESET} [4]: ")
         if main_choice is None:
             continue
         main_choice = main_choice.strip()
         if not main_choice:
-            main_choice = '5'
+            main_choice = '4'
             
         if main_choice == '0':
             sys.exit(0)
@@ -377,7 +375,7 @@ def main():
         elif main_choice == '4':
             clear_screen()
             print(logo_text)
-            print(f"\n{COLOR_GREEN}Режим отображения:{COLOR_RESET}")
+            print(f"\n{COLOR_GREEN}Перед началом выберите режим отображения:{COLOR_RESET}")
             
             print(f"{COLOR_YELLOW}1. Обычный (показывать каждый пинг){COLOR_RESET}")
             print(f"{COLOR_YELLOW}2. Тихий (скрыть процесс, показать только итог и таймер){COLOR_RESET}")
