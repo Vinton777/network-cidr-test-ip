@@ -209,7 +209,7 @@ def edit_file(filename, work_dir):
     except Exception as e:
         print(f"{COLOR_RED}Ошибка: {e}{COLOR_RESET}")
 
-VERSION = "1.9.8"
+VERSION = "1.9.9"
 
 def main():
     work_dir = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
@@ -242,7 +242,7 @@ def main():
         idx = 3
         for f in files:
             if f.endswith('.txt') and f not in ['cidr.txt', 'ip.txt']:
-                name_disp = f.replace(".txt", "").replace("cidr_", "").replace("cidr", "").replace("_", " ").strip().title()
+                name_disp = f.replace(".txt", "").replace("cidr_", "").replace("cidr", "").replace("_", " ").replace("(new)", " New").replace("(", "").replace(")", "").strip().title()
                 
                 # Фикс частых аббревиатур
                 name_disp = name_disp.replace("Ufo", "UFO").replace("Vk", "VK")
