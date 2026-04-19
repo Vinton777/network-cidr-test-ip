@@ -215,7 +215,7 @@ def get_downloads_folder():
     else:
         return os.path.join(os.path.expanduser("~"), "Downloads")
 
-VERSION = "2.0.2"
+VERSION = "2.0.3"
 
 def check_for_updates(auto_update):
     if not auto_update:
@@ -479,7 +479,10 @@ def main():
             os.makedirs(downloads_dir, exist_ok=True)
         except Exception:
             downloads_dir = work_dir
-    results_file = os.path.join(downloads_dir, f"results_{base_name}.csv")
+            
+    import datetime
+    now_str = datetime.datetime.now().strftime("%d.%m.%y %H-%M")
+    results_file = os.path.join(downloads_dir, f"results_{base_name}_{now_str}.csv")
 
 
     results = []
