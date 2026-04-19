@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Функция проверки наличия команды
 check_cmd() {
