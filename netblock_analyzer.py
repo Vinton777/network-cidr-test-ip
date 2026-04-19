@@ -211,11 +211,11 @@ def edit_file(filename, work_dir):
 
 def get_downloads_folder():
     if os.path.exists("/data/data/com.termux"):
-        return os.path.expanduser("~/storage/downloads")
+        return "/storage/emulated/0/Download"
     else:
         return os.path.join(os.path.expanduser("~"), "Downloads")
 
-VERSION = "2.0.0"
+VERSION = "2.0.1"
 
 def check_for_updates(auto_update):
     import urllib.request
